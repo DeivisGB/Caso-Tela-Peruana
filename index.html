@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0F0F0F">
+<title>Plataforma de Evaluación 1 · Tela Peruana | ZEGEL Metodologías Ágiles</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --red:#E8001C;--red-dk:#B5001A;--red-lt:#FF1F38;
+  --black:#0F0F0F;--black-mid:#1A1A1A;--black-soft:#242424;
+  --bone:#F2EFE9;--bone-dk:#E5E1DA;
+  --lime:#AAFF00;--lime-dk:#88CC00;
+  --white:#FFFFFF;--gray:#6B6B6B;--gray-lt:#ABABAB;--ok:#0a7a45;
+  --f-disp:'Syne',system-ui,sans-serif;--f-body:'Libre Baskerville',Georgia,serif;--f-mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--f-body);background:var(--bone);color:var(--black);line-height:1.6}
+:focus-visible{outline:3px solid var(--lime);outline-offset:2px}
+button{font:inherit;cursor:pointer}
+.mono{font-family:var(--f-mono)}
+
+/* NAV */
+#nav{position:fixed;top:0;left:0;right:0;z-index:100;height:56px;background:var(--black);color:var(--white);display:flex;align-items:center;gap:1rem;padding:0 1.2rem;border-bottom:3px solid var(--red)}
+.logo{font-family:var(--f-disp);font-weight:800;letter-spacing:3px;font-size:1.05rem;white-space:nowrap}
+.logo span{color:var(--red)}
+.grp{font-family:var(--f-mono);font-size:.7rem;color:var(--gray-lt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px}
+.sp{flex:1}
+#timer{display:flex;align-items:center;gap:.6rem;font-family:var(--f-mono);font-size:.78rem;background:var(--black-soft);border-radius:3px;padding:.3rem .5rem .3rem .8rem}
+#timer .t{color:var(--lime);font-weight:500;min-width:62px}
+#timer .blk{color:var(--gray-lt);font-size:.64rem;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+#timer.over .t{color:var(--red-lt)}
+.nb{background:transparent;color:var(--white);border:1px solid rgba(255,255,255,.3);border-radius:3px;font-family:var(--f-mono);font-size:.64rem;text-transform:uppercase;letter-spacing:.05em;padding:.4rem .65rem;text-decoration:none;white-space:nowrap}
+.nb:hover{background:var(--red);border-color:var(--red)}
+.nb.lime{background:var(--lime);color:var(--black);border-color:var(--lime);font-weight:700}
+.nb.lime:hover{background:var(--lime-dk)}
+#save{font-family:var(--f-mono);font-size:.62rem;color:var(--gray-lt);white-space:nowrap}
+#ovBar{position:fixed;top:56px;left:0;height:3px;background:var(--lime);z-index:99;width:0;transition:width .4s}
+
+/* LAYOUT */
+#app{display:grid;grid-template-columns:260px 1fr;margin-top:59px;min-height:calc(100vh - 59px)}
+#side{background:var(--black);color:var(--white);padding:1.2rem .8rem;position:sticky;top:59px;height:calc(100vh - 59px);overflow-y:auto}
+#side h2{font-family:var(--f-mono);font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gray-lt);margin:.8rem .5rem .4rem}
+.st{display:flex;align-items:center;gap:.7rem;width:100%;text-align:left;background:transparent;border:0;border-left:3px solid transparent;color:rgba(255,255,255,.8);padding:.6rem .6rem;border-radius:0 3px 3px 0;font-size:.82rem;font-family:var(--f-disp);font-weight:600}
+.st:hover{background:rgba(255,255,255,.06)}
+.st.on{background:var(--red);border-left-color:var(--lime);color:var(--white)}
+.st .n{font-family:var(--f-mono);font-size:.62rem;width:22px;height:22px;border-radius:3px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.st.done .n{background:var(--lime);color:var(--black)}
+.st .pg{margin-left:auto;font-family:var(--f-mono);font-size:.58rem;color:var(--gray-lt)}
+.st.on .pg{color:rgba(255,255,255,.8)}
+#main{padding:2rem 2.5rem 5rem;max-width:980px;width:100%}
+.eyebrow{display:inline-flex;align-items:center;gap:.5rem;font-family:var(--f-mono);font-size:.65rem;letter-spacing:.14em;text-transform:uppercase;color:var(--red);margin-bottom:.4rem}
+.eyebrow::before{content:'';width:16px;height:2px;background:var(--red)}
+h1.ttl{font-family:var(--f-disp);font-weight:800;font-size:clamp(1.7rem,3.4vw,2.5rem);line-height:1;letter-spacing:-1px;margin-bottom:.6rem}
+.lead{font-size:.95rem;max-width:680px;opacity:.85;margin-bottom:1.6rem}
+.card{background:var(--white);border:1px solid var(--bone-dk);border-left:4px solid var(--red);border-radius:4px;padding:1.3rem;margin-bottom:1.1rem}
+.card h3,.card h2{font-family:var(--f-disp);font-size:1.02rem;margin-bottom:.5rem}
+.card p,.card li{font-size:.88rem}
+.card ul{margin-left:1.1rem}
+.dark{background:var(--black);color:var(--white);border-left-color:var(--lime)}
+.dark h3{color:var(--lime)}
+.callout{background:#EEFFC2;border:1px solid var(--lime-dk);border-radius:4px;padding:.9rem 1.1rem;font-size:.85rem;margin-bottom:1.1rem}
+.callout b.k{display:block;font-family:var(--f-mono);font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;margin-bottom:.2rem}
+.callout.warn{background:rgba(232,0,28,.08);border-color:rgba(232,0,28,.45)}
+.quote{border-left:4px solid var(--red);background:var(--white);padding:1rem 1.2rem;font-style:italic;margin-bottom:1.1rem;font-size:.92rem}
+.quote cite{display:block;font-style:normal;font-family:var(--f-mono);font-size:.68rem;color:var(--gray);margin-top:.4rem}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:.8rem}
+.stat{background:var(--black);color:var(--white);border-radius:4px;padding:1rem}
+.stat b{display:block;font-family:var(--f-disp);font-size:1.7rem;color:var(--lime);line-height:1}
+.stat span{font-size:.75rem;opacity:.8;display:block;margin-top:.3rem;line-height:1.35}
+
+/* FIELDS */
+.fld{margin-bottom:1.2rem}
+.fld>label{display:flex;gap:.6rem;flex-wrap:wrap;align-items:baseline;font-family:var(--f-disp);font-weight:700;font-size:.9rem;margin-bottom:.35rem;line-height:1.3}
+.crit{font-family:var(--f-mono);font-weight:400;font-size:.58rem;text-transform:uppercase;letter-spacing:.08em;background:var(--black);color:var(--lime);padding:.15rem .45rem;border-radius:2px}
+.inp,select.inp{font:inherit;font-size:.88rem;width:100%;padding:.65rem .75rem;background:var(--white);border:1.5px solid var(--bone-dk);border-radius:3px;color:var(--black);line-height:1.5}
+textarea.inp{resize:vertical;min-height:90px}
+.inp:focus{border-color:var(--red);outline:2px solid rgba(232,0,28,.2)}
+.meter{font-family:var(--f-mono);font-size:.62rem;color:var(--gray);margin-top:.25rem;display:flex;justify-content:space-between}
+.meter.ok{color:var(--ok)}
+details.hint{margin-bottom:.4rem}
+details.hint summary{font-family:var(--f-mono);font-size:.62rem;color:var(--red);cursor:pointer;text-transform:uppercase;letter-spacing:.06em}
+details.hint p{font-size:.8rem;background:var(--white);border:1px dashed var(--red);padding:.6rem .8rem;margin-top:.3rem;border-radius:3px}
+.row{display:grid;gap:.6rem;align-items:start}
+.item{background:var(--white);border:1px solid var(--bone-dk);border-radius:4px;padding:.9rem;margin-bottom:.7rem;position:relative}
+.item .hd{display:flex;gap:.5rem;align-items:center;margin-bottom:.5rem;font-family:var(--f-mono);font-size:.62rem;text-transform:uppercase;letter-spacing:.08em;color:var(--red)}
+.item .hd .sp{flex:1}
+.ib{background:transparent;border:1px solid var(--bone-dk);border-radius:2px;width:26px;height:26px;font-size:.8rem;line-height:1;color:var(--black)}
+.ib:hover{background:var(--black);color:var(--lime)}
+.ib.del:hover{background:var(--red);color:#fff}
+.add{background:var(--black);color:var(--lime);border:0;border-radius:3px;padding:.55rem 1rem;font-family:var(--f-disp);font-weight:700;font-size:.75rem;letter-spacing:.05em;text-transform:uppercase}
+.add:hover{background:var(--red);color:#fff}
+.btn{display:inline-block;font-family:var(--f-disp);font-weight:700;font-size:.8rem;letter-spacing:.05em;text-transform:uppercase;padding:.7rem 1.2rem;border-radius:3px;border:2px solid var(--black);background:var(--black);color:var(--lime);text-decoration:none}
+.btn:hover{background:var(--red);border-color:var(--red);color:#fff}
+.btn.sec{background:transparent;color:var(--black)}
+.btn.sec:hover{background:var(--black);color:var(--lime);border-color:var(--black)}
+.btn.lime{background:var(--lime);border-color:var(--lime);color:var(--black)}
+.nav-btns{display:flex;justify-content:space-between;gap:1rem;margin-top:2rem;flex-wrap:wrap}
+.mchips{display:grid;grid-template-columns:repeat(4,1fr);gap:.7rem;margin-bottom:1.2rem}
+.mc{background:var(--white);border:2px solid var(--bone-dk);border-radius:4px;padding:.9rem;text-align:left;color:var(--black)}
+.mc b{font-family:var(--f-disp);display:block;margin-bottom:.2rem}
+.mc span{font-size:.74rem;line-height:1.4;display:block;color:var(--gray)}
+.mc[aria-pressed=true]{background:var(--black);border-color:var(--lime);color:var(--white)}
+.mc[aria-pressed=true] span{color:rgba(255,255,255,.75)}
+.badge{display:inline-block;font-family:var(--f-mono);font-size:.58rem;padding:.12rem .4rem;border-radius:2px;margin-right:.3rem;text-transform:uppercase;letter-spacing:.04em}
+.badge.y{background:rgba(0,201,112,.18);color:var(--ok)}.badge.n{background:rgba(232,0,28,.12);color:var(--red-dk)}
+
+/* FLOW VISUALS */
+.fv{margin:1rem 0 1.4rem}
+.fv .lbl{font-family:var(--f-mono);font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;color:var(--red);margin-bottom:.4rem}
+.spr{display:flex;gap:4px;min-height:96px}
+.sp1{background:var(--black);color:var(--white);border-top:3px solid var(--red);border-radius:3px;padding:.6rem .7rem;font-size:.74rem;line-height:1.35;overflow:hidden}
+.sp1 b{font-family:var(--f-disp);color:var(--lime);display:block;font-size:.82rem}
+.sp1 small{font-family:var(--f-mono);font-size:.58rem;color:var(--gray-lt)}
+.scale{display:flex;font-family:var(--f-mono);font-size:.58rem;color:var(--gray);margin-top:.2rem;justify-content:space-between}
+.kb{display:flex;gap:6px;overflow-x:auto;padding-bottom:.3rem}
+.kc{flex:1 0 118px;background:var(--black-soft);border-radius:3px;border-top:3px solid var(--red);color:var(--white);padding:.6rem;min-height:110px}
+.kc b{font-family:var(--f-disp);font-size:.78rem;display:block;line-height:1.2}
+.kc .w{display:inline-block;margin-top:.4rem;font-family:var(--f-mono);font-size:.6rem;background:var(--lime);color:var(--black);padding:.1rem .4rem;border-radius:2px;font-weight:700}
+.kc .w.x{background:var(--red);color:#fff}
+.kc i{display:block;height:14px;margin-top:.35rem;background:rgba(255,255,255,.1);border-radius:2px}
+.dsd{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}
+.dsd .sp1{border-top-color:var(--lime)}
+.ln{display:flex;flex-direction:column;gap:6px}
+.lnr{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+.lnr .sp1:nth-child(1){border-top-color:var(--red)}.lnr .sp1:nth-child(2){border-top-color:var(--lime)}.lnr .sp1:nth-child(3){border-top-color:#fff}
+.empty{font-style:italic;font-size:.85rem;color:var(--gray)}
+
+/* revision */
+.semaforo{display:grid;gap:.8rem}
+.sem-row{background:var(--white);border:1px solid var(--bone-dk);border-radius:4px;padding:1rem}
+.sem-row .h{display:flex;justify-content:space-between;font-family:var(--f-disp);font-weight:700;font-size:.9rem;margin-bottom:.4rem;gap:.8rem}
+.sem-row .h span{font-family:var(--f-mono);font-size:.7rem;color:var(--red)}
+.bar{height:10px;background:var(--bone-dk);border-radius:2px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--red);transition:width .4s}
+.bar.g i{background:var(--ok)}
+.chk label{display:flex;gap:.7rem;align-items:flex-start;background:var(--white);border:1.5px solid var(--bone-dk);border-radius:3px;padding:.75rem .9rem;margin-bottom:.5rem;font-size:.87rem;cursor:pointer}
+.chk input{margin-top:.2rem;width:18px;height:18px;accent-color:var(--red)}
+.chk label:has(input:checked){border-color:var(--ok);background:rgba(0,201,112,.08)}
+
+/* rehearsal */
+.rh{background:var(--black);color:var(--white);border-radius:4px;padding:1.2rem;display:flex;align-items:center;gap:1.2rem;flex-wrap:wrap;margin-bottom:1.1rem}
+.rh .t{font-family:var(--f-disp);font-weight:800;font-size:2.4rem;color:var(--lime);min-width:110px}
+.rh .t.warn{color:#FFB800}.rh .t.bad{color:var(--red-lt)}
+.rh .m{font-family:var(--f-mono);font-size:.72rem;color:var(--gray-lt);flex:1;min-width:180px}
+
+/* overlays */
+.ov{position:fixed;inset:0;z-index:300;background:rgba(15,15,15,.75);display:none}
+.ov.open{display:block}
+.drawer{position:absolute;top:0;right:0;bottom:0;width:min(640px,100%);background:var(--bone);overflow-y:auto;padding:1.5rem;border-left:4px solid var(--lime)}
+.drawer .x{float:right}
+#proj{background:var(--black);z-index:400}
+#proj .slide{position:absolute;inset:0;padding:5vh 6vw;color:var(--white);display:none;flex-direction:column;justify-content:center;overflow:auto}
+#proj .slide.on{display:flex}
+#proj .slide.red{background:var(--red)}
+#proj h2{font-family:var(--f-disp);font-weight:800;font-size:clamp(1.8rem,4.2vw,3.4rem);line-height:1;letter-spacing:-1px;margin-bottom:1.2rem}
+#proj .k{font-family:var(--f-mono);font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;color:var(--lime);margin-bottom:.6rem}
+#proj .big{font-family:var(--f-disp);font-size:clamp(1.3rem,2.8vw,2.3rem);font-weight:700;line-height:1.2;max-width:1000px}
+#proj p,#proj li{font-size:clamp(.95rem,1.8vw,1.35rem);line-height:1.5;max-width:1000px}
+#proj ul{margin-left:1.3rem}
+#proj .sp1,#proj .kc{font-size:clamp(.7rem,1.2vw,.95rem)}
+#proj .sp1 b{font-size:clamp(.8rem,1.4vw,1.1rem)}
+#proj .kc b{font-size:clamp(.75rem,1.3vw,1rem)}
+#projUI{position:absolute;bottom:1rem;left:0;right:0;display:flex;justify-content:center;gap:.6rem;z-index:5;align-items:center}
+#projUI .c{font-family:var(--f-mono);font-size:.7rem;color:var(--gray-lt)}
+.tbl{width:100%;border-collapse:collapse;font-size:.85rem}
+.tbl th{background:var(--black);color:var(--lime);font-family:var(--f-mono);font-size:.62rem;text-transform:uppercase;text-align:left;padding:.6rem}
+.tbl td{padding:.6rem;border-bottom:1px solid var(--bone-dk);vertical-align:top}
+#proj .tbl td{border-color:rgba(255,255,255,.2)}
+#proj .fv .lbl{color:var(--lime)}
+#proj .empty{color:var(--gray-lt)}
+
+/* docente */
+.doc-wrap{display:grid;grid-template-columns:260px 1fr;gap:1.2rem}
+.gl button{display:block;width:100%;text-align:left;background:var(--white);border:1.5px solid var(--bone-dk);border-radius:3px;padding:.6rem .8rem;margin-bottom:.4rem;font-family:var(--f-disp);font-weight:700;font-size:.85rem}
+.gl button.on{border-color:var(--red);background:var(--black);color:var(--lime)}
+.gl small{font-family:var(--f-mono);font-weight:400;font-size:.58rem;display:block;opacity:.75}
+.rub{background:var(--white);border:1px solid var(--bone-dk);border-radius:4px;padding:1rem;margin-bottom:.8rem}
+.rub .h{display:flex;justify-content:space-between;font-family:var(--f-disp);font-weight:700;gap:.8rem}
+.rub .h span{font-family:var(--f-mono);font-size:.7rem;color:var(--red)}
+.rub input[type=range]{width:100%;accent-color:var(--red);margin:.4rem 0}
+.gradebox{background:var(--black);color:var(--white);padding:1.2rem;border-radius:4px;text-align:center}
+.gradebox b{font-family:var(--f-disp);font-size:3rem;color:var(--lime);display:block;line-height:1}
+
+#printArea{display:none}
+.pre{white-space:pre-wrap;margin-bottom:.4rem;font-size:.88rem}
+#docSummary h1{font-family:var(--f-disp);font-size:1.4rem;margin-bottom:.3rem}
+#docSummary h2{font-family:var(--f-disp);font-size:1.05rem;color:var(--red-dk);margin:1.1rem 0 .3rem}
+#docSummary h3{font-family:var(--f-mono);font-size:.64rem;text-transform:uppercase;letter-spacing:.08em;margin:.6rem 0 .15rem}
+#docSummary table{width:100%;border-collapse:collapse;font-size:.84rem;margin:.3rem 0}
+#docSummary th,#docSummary td{border:1px solid var(--bone-dk);padding:.4rem .5rem;text-align:left;vertical-align:top}
+#docSummary th{background:var(--black);color:var(--lime);font-family:var(--f-mono);font-size:.6rem;text-transform:uppercase}
+#docSummary .meta{font-size:.75rem;color:var(--gray)}
+
+@media (max-width:900px){
+  #app{grid-template-columns:1fr}
+  #side{position:static;height:auto;display:flex;overflow-x:auto;padding:.5rem;gap:.3rem}
+  #side h2{display:none}
+  .st{width:auto;white-space:nowrap;border-left:0;border-bottom:3px solid transparent;border-radius:3px}
+  .st.on{border-bottom-color:var(--lime)}
+  .st .pg{display:none}
+  #main{padding:1.4rem 1.1rem 4rem}
+  .grid2,.grid4,.mchips,.doc-wrap{grid-template-columns:1fr 1fr}
+  .doc-wrap{grid-template-columns:1fr}
+  .dsd{grid-template-columns:1fr}
+  .grp,#save{display:none}
+  #nav{gap:.5rem;padding:0 .7rem}
+  .nb.hide-m{display:none}
+  #timer .blk{display:none}
+}
+@media (max-width:560px){.grid2,.grid4,.mchips{grid-template-columns:1fr}}
+
+@media print{
+  body{background:#fff}
+  #nav,#ovBar,#app,.ov{display:none!important}
+  #printArea{display:block;font-family:Georgia,serif;color:#000;font-size:10.5pt;line-height:1.45;padding:0}
+  #printArea h1{font-family:Arial,sans-serif;font-size:18pt;border-bottom:3px solid #E8001C;padding-bottom:4pt;margin-bottom:6pt}
+  #printArea h2{font-family:Arial,sans-serif;font-size:12pt;margin:12pt 0 4pt;color:#B5001A;page-break-after:avoid}
+  #printArea h3{font-family:Arial,sans-serif;font-size:10pt;margin:6pt 0 2pt}
+  #printArea table{width:100%;border-collapse:collapse;margin:4pt 0}
+  #printArea th,#printArea td{border:1px solid #999;padding:3pt 5pt;font-size:9.5pt;text-align:left;vertical-align:top}
+  #printArea th{background:#eee}
+  #printArea .pre{white-space:pre-wrap;margin-bottom:4pt}
+  #printArea .meta{font-size:9pt;color:#444}
+  #printArea .fv{display:none}
+}
+</style>
+</head>
+<body>
+<div id="ovBar" aria-hidden="true"></div>
+<header id="nav">
+  <div class="logo">ZEGEL<span>.</span></div>
+  <div class="grp" id="navGrp">Evaluación 1 · A1</div>
+  <div class="sp"></div>
+  <div id="timer" role="timer" aria-label="Cronómetro de la sesión"><span class="t" id="tT">00:00</span><span class="blk" id="tB">Bloque 1</span><button class="nb" id="tBtn" type="button">▶ Iniciar</button></div>
+  <span id="save" role="status" aria-live="polite">Guardado automático</span>
+  <button class="nb hide-m" id="btnCaso" type="button">Ver caso</button>
+  <a class="nb hide-m" href="landing_semana5_repaso_evaluacion1.html" target="_blank" rel="noopener">Repaso ↗</a>
+  <button class="nb lime" id="btnProj" type="button">Proyectar</button>
+</header>
+
+<div id="app">
+  <nav id="side" aria-label="Pasos de la evaluación"></nav>
+  <main id="main" tabindex="-1"></main>
+</div>
+
+<div class="ov" id="ovCaso" role="dialog" aria-modal="true" aria-label="Caso Tela Peruana"><div class="drawer"><button class="nb x" style="color:var(--black);border-color:var(--black)" type="button" data-act="closeCaso">Cerrar ✕</button><div id="casoBox"></div></div></div>
+<div class="ov" id="proj" role="dialog" aria-modal="true" aria-label="Vista de proyección"><div id="projSlides"></div><div id="projUI"><button class="nb" type="button" data-act="projPrev">← Anterior</button><span class="c" id="projC"></span><button class="nb" type="button" data-act="projNext">Siguiente →</button><button class="nb" type="button" data-act="projClose">Salir (Esc)</button></div></div>
+<div id="printArea"></div>
+
+<script>
+'use strict';
+/* ═══════════ utilidades ═══════════ */
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const wc=s=>{s=(s||'').trim();return s?s.split(/\s+/).length:0};
+const KEY='zegel_ev1_tela_peruana_v1',KEYD='zegel_ev1_docente_v1';
+const lsGet=(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}};
+const lsSet=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){return false}};
+const pget=(o,p)=>p.split('.').reduce((a,k)=>a==null?a:a[k],o);
+const pset=(o,p,v)=>{const ks=p.split('.');let a=o;for(let i=0;i<ks.length-1;i++)a=a[ks[i]];a[ks[ks.length-1]]=v};
+
+/* ═══════════ estado ═══════════ */
+const ROLES=[['','— rol —'],['PO','Product Owner (PO)'],['AC','Agile Coach (AC)'],['UX','UX Lead / Diseño de Experiencia'],['CB','Creativo / Brand Strategist'],['AM','Account Manager (si son 5)']];
+const METODOS={scrum:['Scrum','Iteraciones fijas (sprints) con roles y ceremonias.'],kanban:['Kanban','Flujo continuo, tablero y límites WIP.'],lean:['Lean UX','Ciclos Build–Measure–Learn guiados por hipótesis.'],ds:['Design Sprint','5 días: de reto a prototipo testeado.']};
+const SIZES=['XS','S','M','L','XL'];
+function defState(){
+  const ds=['Lunes · Mapear','Martes · Esbozar','Miércoles · Decidir','Jueves · Prototipar','Viernes · Testear'].map(n=>({n,par:'',obj:'',out:''}));
+  return{v:1,meta:{grupo:'',dur:180},team:[0,1,2,3,4].map(()=>({n:'',r:''})),extra:{time:'',escriba:''},timer:{acc:0,startedAt:null},visited:{},
+    b1:{problema:'',q1:'',q2:'',q3:'',q4:'',metodo:'',descartada:'',porque:'',riesgo:''},
+    b2:{cambio:'',flujoDesc:'',
+      scrum:{po:'',cer:'',sprints:[{n:'Sprint 1',sem:2,goal:'',ent:''},{n:'Sprint 2',sem:2,goal:'',ent:''}]},
+      kanban:{pol:'',cols:['Brief recibido','Conceptualización','Diseño en proceso','Revisión con marketing','Producción','Publicado'].map(n=>({n,w:''}))},
+      ds:{dias:ds,decision:''},lean:{ciclos:[{h:'',b:'',m:'',l:''}]},
+      backlog:[0,1,2,3,4,5].map(()=>({t:'',s:'M',why:''})),roles:{po:'',sm:'',eq:'',st:''},metricas:[{t:''},{t:''},{t:''}],
+      plan:['Semana 1','Semana 1','Semana 2','Semana 2','Semana 3–4','Semana 3–4'].map(s=>({s,a:'',r:'',p:''}))},
+    b3:{prob:'',sol:'',met:'',obst:'',preg:'',notas:'',ensayoSeg:0},rev:{c:[false,false,false]}};
+}
+function merge(base,src){ // mezcla estructura por defecto con lo guardado (tolera versiones)
+  if(Array.isArray(base))return Array.isArray(src)?src:base;
+  if(base&&typeof base==='object'){if(!Object.keys(base).length)return(src&&typeof src==='object')?src:base;const o={};for(const k in base)o[k]=merge(base[k],src&&src[k]);return o}
+  return src===undefined||src===null?base:src;
+}
+let S=merge(defState(),lsGet(KEY,null));
+let saveT=null;
+function save(){S.meta.savedAt=Date.now();const ok=lsSet(KEY,S);const el=$('#save');el.textContent=ok?'Guardado '+new Date().toLocaleTimeString('es-PE',{hour:'2-digit',minute:'2-digit',second:'2-digit'}):'⚠ No se pudo guardar: descarga tu .json';el.style.color=ok?'':'#FF6680';}
+function saveSoon(){clearTimeout(saveT);saveT=setTimeout(save,350)}
+
+/* ═══════════ criterios de métrica ═══════════ */
+function metricCheck(t){
+  t=t||'';
+  return{num:/\d/.test(t),plazo:/(\d+\s*(d[ií]as?|semanas?|meses?|sprints?|a[nñ]os?|trimestres?))|trimestre|semestre|lima fashion|30 d/i.test(t),base:/(\bdel?\s+[\d.,]+\s*(%|semanas?|d[ií]as?|horas?|\w+)?\s*(a|al|hasta)\s+(el\s+)?[\d.,]+)|l[ií]nea base|actual(mente)?|desde\s+\d|pasar de|reducir de|aumentar de|respecto a|frente a|baseline|vs\.?\s/i.test(t)};
+}
+const metricOk=t=>{const c=metricCheck(t);return c.num&&c.plazo&&c.base};
+
+/* ═══════════ completitud ═══════════ */
+const STEPS=[
+ {id:'equipo',n:1,t:'Equipo y roles',blk:0},
+ {id:'caso',n:2,t:'El caso',blk:0},
+ {id:'diag',n:3,t:'Diagnóstico',blk:0},
+ {id:'metodo',n:4,t:'Metodología',blk:0},
+ {id:'flujo',n:5,t:'Flujo de trabajo',blk:1},
+ {id:'artef',n:6,t:'Artefactos',blk:1},
+ {id:'plan',n:7,t:'Plan de 30 días',blk:1},
+ {id:'expo',n:8,t:'Exposición',blk:2},
+ {id:'rev',n:9,t:'Revisión final',blk:2},
+ {id:'entrega',n:10,t:'Entrega y exportación',blk:2}
+];
+function flujoProg(st){
+  const b=st.b1.metodo,f=st.b2;let d=0,t=0;
+  t+=1;d+=wc(f.cambio)>=12?1:0;
+  if(!b)return{d:0,t:2};
+  if(b==='scrum'){const s=f.scrum.sprints,wk=s.reduce((a,x)=>a+(+x.sem||0),0);t+=5;d+=f.scrum.po.trim()?1:0;d+=Math.min(s.filter(x=>x.goal.trim()&&x.ent.trim()).length,2);d+=(wk>0&&wk<=10)?1:0;d+=wc(f.scrum.cer)>=6?1:0}
+  else if(b==='kanban'){const c=f.kanban.cols;t+=5;d+=Math.min(c.filter(x=>x.n.trim()&&+x.w>0).length,4);d+=wc(f.kanban.pol)>=6?1:0}
+  else if(b==='ds'){const dd=f.ds.dias;t+=6;d+=dd.filter(x=>x.par.trim()&&x.obj.trim()&&x.out.trim()).length;d+=f.ds.decision.trim()?1:0}
+  else{const c=f.lean.ciclos;t+=2;d+=c.filter(x=>x.h.trim()&&x.b.trim()&&x.m.trim()&&x.l.trim()).length?2:0}
+  return{d,t};
+}
+function progress(id,st){
+  const b1=st.b1,b2=st.b2,b3=st.b3;
+  switch(id){
+   case'equipo':{const ok=st.team.filter(m=>m.n.trim()&&m.r);const rs=ok.map(m=>m.r);const req=['PO','AC','UX','CB'].filter(r=>rs.includes(r)).length;return{d:(st.meta.grupo.trim()?1:0)+Math.min(ok.length,4)+req+(new Set(rs).size===rs.length?1:0),t:10}}
+   case'caso':return{d:st.visited.caso?1:0,t:1};
+   case'diag':return{d:(wc(b1.problema)>=6?1:0)+['q1','q2','q3','q4'].filter(k=>wc(b1[k])>=15).length,t:5};
+   case'metodo':return{d:(b1.metodo?1:0)+(b1.descartada?1:0)+(wc(b1.porque)>=25?1:0)+(wc(b1.riesgo)>=8?1:0),t:4};
+   case'flujo':return flujoProg(st);
+   case'artef':return{d:Math.min(b2.backlog.filter(x=>x.t.trim()).length,6)+Object.values(b2.roles).filter(x=>x.trim()).length+Math.min(b2.metricas.filter(x=>metricOk(x.t)).length,3),t:13};
+   case'plan':return{d:Math.min(b2.plan.filter(x=>x.a.trim()&&x.r.trim()&&x.p.trim()).length,6),t:6};
+   case'expo':return{d:['prob','sol','met','obst'].filter(k=>wc(b3[k])>=8).length+(b3.ensayoSeg>=300&&b3.ensayoSeg<=420?1:0),t:5};
+   case'rev':return{d:st.rev.c.filter(Boolean).length,t:3};
+   default:return{d:0,t:0};
+  }
+}
+function criterios(st){
+  const P=id=>progress(id,st);
+  const r=(...ids)=>{let d=0,t=0;ids.forEach(i=>{const p=P(i);d+=p.d;t+=p.t});return t?d/t:0};
+  const eq=P('equipo'),ex=P('expo'),rv=P('rev');
+  return[
+    ['Coherencia del diagnóstico',30,r('diag')],
+    ['Selección y justificación de metodología',30,r('metodo')],
+    ['Calidad de la propuesta de implementación',25,r('flujo','artef','plan')],
+    ['Exposición y trabajo colaborativo',15,(ex.d+rv.d+eq.d)/(ex.t+rv.t+eq.t)]
+  ];
+}
+function overall(st){let d=0,t=0;STEPS.forEach(s=>{if(s.id==='entrega')return;const p=progress(s.id,st);d+=p.d;t+=p.t});return t?d/t:0}
+
+/* ═══════════ temporizador ═══════════ */
+const elapsed=()=>S.timer.acc+(S.timer.startedAt?Date.now()-S.timer.startedAt:0);
+const mmss=ms=>{const s=Math.max(0,Math.floor(ms/1000));return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')};
+function tick(){
+  const total=S.meta.dur*60000,per=total/3,e=elapsed();
+  const b=Math.min(2,Math.floor(e/per)),left=per*(b+1)-e;
+  $('#tT').textContent=mmss(e);
+  $('#tB').textContent=e>=total?'Tiempo total cumplido':'Bloque '+(b+1)+' · quedan '+mmss(left);
+  $('#timer').classList.toggle('over',e>=total||left<5*60000);
+  $('#tBtn').textContent=S.timer.startedAt?'⏸ Pausar':(e>0?'▶ Reanudar':'▶ Iniciar');
+}
+$('#tBtn').onclick=()=>{
+  if(S.timer.startedAt){S.timer.acc+=Date.now()-S.timer.startedAt;S.timer.startedAt=null}else S.timer.startedAt=Date.now();
+  save();tick();
+};
+setInterval(tick,1000);
+
+/* ═══════════ componentes ═══════════ */
+function fld(path,label,o={}){
+  const id='f_'+path.replace(/\W/g,'_'),v=pget(S,path)||'';
+  const multi=o.rows!==0;
+  return`<div class="fld"><label for="${id}">${label}${o.crit?`<span class="crit">${o.crit}</span>`:''}</label>${o.hint?`<details class="hint"><summary>Pista</summary><p>${o.hint}</p></details>`:''}${multi?`<textarea id="${id}" class="inp" data-k="${path}" rows="${o.rows||4}" placeholder="${esc(o.ph||'')}">${esc(v)}</textarea>`:`<input id="${id}" class="inp" type="${o.type||'text'}" data-k="${path}" value="${esc(v)}" placeholder="${esc(o.ph||'')}" ${o.list?`list="${o.list}"`:''}>`}${o.min?`<div class="meter" data-for="${path}" data-min="${o.min}"></div>`:''}</div>`;
+}
+function ctl(act,list,i,len){return`<div class="hd"><span class="sp"></span>${i>0?`<button class="ib" type="button" data-act="up" data-list="${list}" data-i="${i}" aria-label="Subir">↑</button>`:''}${i<len-1?`<button class="ib" type="button" data-act="down" data-list="${list}" data-i="${i}" aria-label="Bajar">↓</button>`:''}<button class="ib del" type="button" data-act="del" data-list="${list}" data-i="${i}" aria-label="Eliminar">✕</button></div>`}
+function sel(path,opts,o={}){const v=pget(S,path);return`<select class="inp" data-k="${path}" ${o.re?'data-re="1"':''} aria-label="${esc(o.al||'')}">${opts.map(x=>`<option value="${esc(x[0])}" ${x[0]===v?'selected':''}>${esc(x[1])}</option>`).join('')}</select>`}
+function navBtns(i){const p=STEPS[i-1],n=STEPS[i+1];return`<div class="nav-btns">${p?`<button class="btn sec" type="button" data-go="${p.id}">← ${p.t}</button>`:'<span></span>'}${n?`<button class="btn" type="button" data-go="${n.id}">${n.t} →</button>`:''}</div>`}
+function head(i,k,t,l){return`<div class="eyebrow">${k}</div><h1 class="ttl">${t}</h1><p class="lead">${l}</p>`}
+
+/* visual de flujo (se usa en el paso y en la proyección) */
+function flowVisual(st){
+  const b=st.b1.metodo,f=st.b2;
+  if(!b)return'<p class="empty">Aún no eligieron metodología.</p>';
+  if(b==='scrum'){
+    const s=f.scrum.sprints,wk=s.reduce((a,x)=>a+(+x.sem||0),0);
+    return`<div class="fv"><div class="lbl">Mapa de sprints · ${wk} semanas${wk>10?' ⚠ excede las 10 semanas':''}</div><div class="spr">${s.map(x=>`<div class="sp1" style="flex:${Math.max(+x.sem||1,1)}"><b>${esc(x.n||'Sprint')}</b><small>${+x.sem||0} sem</small><br>${x.goal?'<u>Goal:</u> '+esc(x.goal):'<i>sin Sprint Goal</i>'}<br>${x.ent?'<u>Entrega:</u> '+esc(x.ent):''}</div>`).join('')}</div><div class="scale"><span>Semana 1</span><span>Lima Fashion Week: semana 10</span></div></div>`;
+  }
+  if(b==='kanban'){
+    return`<div class="fv"><div class="lbl">Tablero Kanban</div><div class="kb">${f.kanban.cols.filter(c=>c.n.trim()).map(c=>`<div class="kc"><b>${esc(c.n)}</b><span class="w ${+c.w>0?'':'x'}">WIP ${+c.w>0?c.w:'?'}</span><i></i><i style="width:70%"></i></div>`).join('')}</div></div>`;
+  }
+  if(b==='ds'){
+    return`<div class="fv"><div class="lbl">Los 5 días del Design Sprint</div><div class="dsd">${f.ds.dias.map(d=>`<div class="sp1"><b>${esc(d.n)}</b>${d.par?'<small>Participan:</small> '+esc(d.par)+'<br>':''}${d.obj?esc(d.obj):'<i>por definir</i>'}${d.out?'<br><u>Sale:</u> '+esc(d.out):''}</div>`).join('')}</div>${f.ds.decision?`<p style="margin-top:.5rem"><b>Decisión del viernes:</b> ${esc(f.ds.decision)}</p>`:''}</div>`;
+  }
+  return`<div class="fv"><div class="lbl">Ciclos Build–Measure–Learn</div><div class="ln">${f.lean.ciclos.map((c,i)=>`<div class="lnr"><div class="sp1"><b>Build ${i+1}</b>${esc(c.b)||'<i>por definir</i>'}<br><small>Hipótesis:</small> ${esc(c.h)}</div><div class="sp1"><b>Measure</b>${esc(c.m)||'<i>por definir</i>'}</div><div class="sp1"><b>Learn</b>${esc(c.l)||'<i>por definir</i>'}</div></div>`).join('')}</div></div>`;
+}
+
+/* ═══════════ el caso ═══════════ */
+function casoHTML(){return`
+<div class="eyebrow">Caso práctico · simulado con fines académicos</div>
+<h1 class="ttl">Tela Peruana: una marca atrapada en su propio proceso</h1>
+<div class="callout"><b class="k">Nota</b>Caso ficticio construido sobre dinámicas reales del sector textil-moda peruano. La empresa, sus datos y personajes son ficticios.</div>
+<div class="card"><h3>Presentación del cliente</h3><ul>
+<li><b>Empresa:</b> Tela Peruana S.A.C. · <b>Fundación:</b> 2016</li>
+<li><b>Sector:</b> moda, indumentaria y accesorios con identidad andina contemporánea</li>
+<li><b>Ubicación:</b> sede en Miraflores (Lima), producción en Gamarra (La Victoria) y tienda pop-up en el Mercado 28 de Julio (Surquillo)</li>
+<li><b>Equipo (18):</b> 4 diseñadores de moda, 2 diseñadores gráficos, 1 community manager, 3 de producción, 4 de ventas, 4 administrativos</li></ul></div>
+<div class="card"><h3>Contexto y situación actual</h3><p>Nació para democratizar la estética andina en el mercado urbano limeño. Sus colecciones fusionan tejidos de Ayacucho y Cusco con siluetas contemporáneas y han tenido cobertura en El Comercio y la revista Cosas. Desde 2022 el crecimiento se estancó y los problemas internos se acumulan.</p><p style="margin-top:.6rem">El proceso para lanzar una colección es <b>completamente lineal y secuencial</b>: diseño trabaja meses en solitario, presenta bocetos a marketing, que los rechaza o pide cambios tardíos, y luego producción alerta que los materiales no están disponibles o el presupuesto no alcanza. Resultado: colecciones tardías, con cambios de último minuto que deterioran la calidad.</p><p style="margin-top:.6rem">El gerente general, <b>Rodrigo Valdés</b>, escuchó sobre "trabajo ágil" en la Cámara de Comercio de Lima, pero no sabe qué significa en la práctica ni por dónde empezar. Contrató a su agencia para que le diga qué hacer.</p></div>
+<div class="card"><h3>Datos concretos del problema</h3>
+<div class="grid4" style="margin-bottom:1rem"><div class="stat"><b>22</b><span>semanas de ciclo promedio por colección (estándar del sector: 10–14)</span></div><div class="stat"><b>4 de 6</b><span>colecciones con retraso promedio de 6 semanas; 1 cancelada</span></div><div class="stat"><b>61%</b><span>de compradores habituales buscó la colección antes de que estuviera disponible (n=340)</span></div><div class="stat"><b>1 / mes</b><span>reunión de coordinación; sin reuniones semanales ni tablero compartido</span></div></div>
+<p><b>Quejas del cliente interno:</b></p>
+<div class="quote" style="margin-top:.5rem">"Recibimos los artes gráficos para redes sociales el mismo día del lanzamiento, sin tiempo para programarlos."<cite>— Coordinadora de ventas online</cite></div>
+<div class="quote">"Los diseñadores cambian los colores de la colección sin avisarnos, y ya tenemos impreso el catálogo."<cite>— Responsable de producción</cite></div>
+<div class="quote">"El área de marketing se entera de los diseños finales cuando ya están en producción."<cite>— Community manager</cite></div></div>
+<div class="card dark"><h3>El dilema estratégico</h3><p>"Necesito que me digan qué metodología ágil debo implementar, que me expliquen cómo funciona paso a paso, y que me digan qué va a cambiar en mis primeros 30 días. No quiero teoría: quiero saber qué hago el lunes por la mañana." — <i>Rodrigo Valdés, Gerente General</i></p><ul style="margin-top:.8rem"><li>Presupuesto limitado: no hay Scrum Master externo de tiempo completo.</li><li>El equipo no tiene experiencia previa con metodologías ágiles.</li><li>En <b>10 semanas</b> se abre la convocatoria de Lima Fashion Week: quieren presentar una colección cápsula nueva.</li></ul></div>
+<div class="card"><h3>Preguntas para el debate estratégico</h3><p style="margin-bottom:.5rem">No tienen una respuesta única correcta: son señales de que están pensando con profundidad.</p><ul><li>¿Una sola metodología será suficiente para resolver todos los problemas que identifican?</li><li>¿Scrum funciona igual en una agencia creativa de moda que en una empresa de tecnología?</li><li>¿Qué pasa si el cliente cambia de opinión a mitad del sprint sobre la dirección estética?</li><li>¿Cómo convences a diseñadores creativos —que valoran su autonomía— de trabajar con ceremonias y tableros?</li></ul></div>`}
+
+/* ═══════════ vistas por paso ═══════════ */
+const VIEWS={
+equipo(i){
+  const rs=S.team.filter(m=>m.r).map(m=>m.r),dup=rs.length!==new Set(rs).size;
+  const miss=['PO','AC','UX','CB'].filter(r=>!rs.includes(r));
+  return head(i,'Antes de comenzar','Equipo y roles','Asignen roles desde el primer momento: el trabajo sin estructura no es ágil, es caos. Si son 4, una persona puede asumir dos roles menores (Account Manager).')+
+  `<div class="card"><div class="grid2">${fld('meta.grupo','Nombre de la agencia / grupo',{rows:0,ph:'Ej.: Estudio Quipu'})}<div class="fld"><label for="dur">Duración total de la sesión</label><select id="dur" class="inp" data-k="meta.dur" data-num="1" data-re="1"><option value="180" ${S.meta.dur==180?'selected':''}>180 minutos (3 bloques de 60)</option><option value="120" ${S.meta.dur==120?'selected':''}>120 minutos (3 bloques de 40)</option></select></div></div></div>
+  <div class="card"><h3>Integrantes (4 a 5)</h3>${S.team.map((m,k)=>`<div class="row" style="grid-template-columns:1fr 1fr;margin-bottom:.5rem"><input class="inp" aria-label="Nombre integrante ${k+1}" data-k="team.${k}.n" value="${esc(m.n)}" placeholder="Integrante ${k+1}${k==4?' (opcional)':''}">${sel('team.'+k+'.r',ROLES,{re:1,al:'Rol integrante '+(k+1)})}</div>`).join('')}
+  ${dup?'<div class="callout warn"><b class="k">Revisa</b>Hay un rol repetido. Cada rol debe tener un responsable (si son 4, una persona puede sumar el rol de Account Manager).</div>':''}
+  ${miss.length&&S.team.filter(m=>m.n.trim()).length>=4?`<div class="callout warn"><b class="k">Faltan roles</b>Sin asignar: ${miss.map(r=>ROLES.find(x=>x[0]===r)[1]).join(', ')}.</div>`:''}</div>
+  <div class="card"><h3>Roles de apoyo de la guía rápida</h3><div class="grid2">${fld('extra.time','Timekeeper (controla el tiempo)',{rows:0})}${fld('extra.escriba','Escriba (documenta decisiones)',{rows:0})}</div></div>
+  <div class="card"><h3>Qué hace cada rol</h3><table class="tbl"><thead><tr><th>Rol</th><th>Responsabilidad en esta sesión</th></tr></thead><tbody>
+  <tr><td><b>Product Owner</b></td><td>Representa los intereses del cliente. En la presentación habla desde su perspectiva y asegura que la propuesta responda a necesidades reales del negocio.</td></tr>
+  <tr><td><b>Agile Coach</b></td><td>Lidera la selección y justificación de la metodología; guardián del proceso. Debe formular al menos una pregunta crítica que el grupo debata antes de decidir.</td></tr>
+  <tr><td><b>UX Lead</b></td><td>Diseña el flujo visual (tablero, mapa de sprints, journey). Asegura que sea comprensible para el cliente.</td></tr>
+  <tr><td><b>Creativo / Brand Strategist</b></td><td>Conecta la metodología con la realidad del proceso creativo; protege la identidad creativa de Tela Peruana.</td></tr>
+  <tr><td><b>Account Manager</b></td><td>Coordina tiempos, es vocero en la exposición y vela por las entregas de cada bloque.</td></tr></tbody></table></div>`+navBtns(i);
+},
+caso(i){S.visited.caso=true;return casoHTML()+`<div class="callout"><b class="k">Consejo</b>Cada integrante subraya lo que considera el problema más crítico y luego lo comparten en voz alta. Podrán abrir el caso en cualquier momento con el botón <b>Ver caso</b> de la barra superior.</div>`+navBtns(i)},
+diag(i){
+  return head(i,'Bloque 1 · Diagnóstico y planificación','Diagnóstico','Entender profundamente el problema antes de proponer soluciones. Una propuesta ágil sin diagnóstico sólido es solo una plantilla vacía.')+
+  `<div class="callout"><b class="k">Patrón que premia la rúbrica (30%)</b>Evidencia del caso → causa raíz → valor del Manifiesto violado → impacto cuantificado. <a href="landing_semana5_repaso_evaluacion1.html#diagnostico" target="_blank" rel="noopener">Ver repaso ↗</a></div>`+
+  fld('b1.problema','Paso 1 · Problema central identificado por el grupo (una oración)',{rows:2,crit:'Criterio 1 · 30%',min:6,hint:'Una sola oración potente. Si necesitan dos, aún no tienen claro el problema. Que describa el sistema, no a las personas.'})+
+  fld('b1.q1','Pregunta 1 · ¿Cuál es el mayor cuello de botella en el proceso creativo? ¿En qué punto del flujo se pierde más tiempo o se generan más reprocesos?',{rows:5,min:15,crit:'Criterio 1',hint:'Busquen la causa detrás de la causa: pregúntense "¿por qué?" varias veces. Citen datos del caso.'})+
+  fld('b1.q2','Pregunta 2 · ¿Qué valor del Manifiesto Ágil está siendo violado sistemáticamente? Justifiquen con evidencia del caso.',{rows:5,min:15,crit:'Criterio 1',hint:'Nombren el valor (clásico y su adaptación) y expliquen por qué una evidencia concreta lo demuestra. Pueden usar uno principal y uno secundario.'})+
+  fld('b1.q3','Pregunta 3 · ¿Qué impacto tiene la falta de agilidad en el negocio? Cuantifiquen usando los datos del caso.',{rows:5,min:15,crit:'Criterio 1',hint:'Comparen cifras reales del caso con el estándar del sector y calculen diferencias o porcentajes. Incluyan demanda no capturada.'})+
+  fld('b1.q4','Pregunta 4 · ¿Cuáles son los dos principales obstáculos humanos o culturales que una metodología ágil enfrentaría en este equipo?',{rows:5,min:15,crit:'Criterio 1',hint:'Piensen en personas y áreas concretas, no en "resistencia al cambio" en abstracto. Anticipen una estrategia para cada obstáculo.'})+navBtns(i);
+},
+metodo(i){
+  const b=S.b1.metodo;
+  const desc=Object.entries(METODOS).filter(([k])=>k!==b).map(([k,v])=>[k,v[0]]);
+  return head(i,'Bloque 1 · Paso 3','Selección de metodología','Elijan una metodología principal y justifiquen la elección comparándola con al menos otra que descartaron. La justificación debe ser crítica, no descriptiva.')+
+  `<div class="mchips" role="group" aria-label="Metodología elegida">${Object.entries(METODOS).map(([k,v])=>`<button type="button" class="mc" data-act="setMetodo" data-v="${k}" aria-pressed="${b===k}"><b>${v[0]}</b><span>${v[1]}</span></button>`).join('')}</div>`+
+  `<div class="fld"><label for="desc">Metodología descartada que compararon<span class="crit">Criterio 2 · 30%</span></label><select id="desc" class="inp" data-k="b1.descartada" ${b?'':'disabled'}><option value="">— elige —</option>${desc.map(([k,n])=>`<option value="${k}" ${S.b1.descartada===k?'selected':''}>${n}</option>`).join('')}</select></div>`+
+  fld('b1.porque','¿Por qué esta metodología y no las otras? (compare con al menos una alternativa)',{rows:7,min:25,crit:'Criterio 2 · 30%',hint:'Fórmula: contexto del caso → criterio → elección → alternativa descartada y por qué → riesgo. Ej.: "Dado que hay una fecha fija en 10 semanas y el equipo no tiene experiencia, necesitamos…". Evita describir la metodología sin conectarla con Tela Peruana.'})+
+  fld('b1.riesgo','Riesgo principal de su elección y cómo lo mitigan',{rows:3,min:8,crit:'Pensamiento crítico',hint:'Toda elección tiene un costo. Nombrarlo y mitigarlo demuestra criterio.'})+
+  `<div class="callout"><b class="k">Recordatorio</b>Dos grupos pueden elegir metodologías distintas y ambos sacar sobresaliente. Se evalúa la justificación, no la "respuesta correcta". Pueden complementar con prácticas de otra metodología siempre que aclaren cuál es la principal.</div>`+navBtns(i);
+},
+flujo(i){
+  const b=S.b1.metodo,f=S.b2;let body='';
+  if(!b)body='<div class="callout warn"><b class="k">Primero elijan</b>El constructor de flujo se adapta a la metodología seleccionada. <button class="btn sec" type="button" data-go="metodo" style="margin-top:.5rem">Ir a Metodología</button></div>';
+  else if(b==='scrum'){
+    const sp=f.scrum.sprints,wk=sp.reduce((a,x)=>a+(+x.sem||0),0);
+    body=`<div class="callout"><b class="k">Si eligieron Scrum</b>Definan al menos 2 sprints mínimos viables para lanzar la colección cápsula en 10 semanas. ¿Qué se entrega al final de cada sprint? ¿Quién es el Product Owner en Tela Peruana?</div>`+
+    fld('b2.scrum.po','Product Owner de Tela Peruana (persona y por qué)',{rows:2,min:6,hint:'El PO necesita autoridad para decidir prioridades y disponibilidad. Piensa en las 18 personas del equipo.'})+
+    sp.map((s,k)=>`<div class="item"><div class="hd"><span>Sprint ${k+1}</span>${ctl('',  'b2.scrum.sprints',k,sp.length).replace('<div class="hd">','').replace(/<\/div>$/,'')}</div><div class="row" style="grid-template-columns:2fr 1fr"><input class="inp" aria-label="Nombre del sprint" data-k="b2.scrum.sprints.${k}.n" value="${esc(s.n)}"><input class="inp" type="number" min="1" max="4" aria-label="Duración en semanas" data-k="b2.scrum.sprints.${k}.sem" data-num="1" data-re="1" value="${s.sem}"></div><div class="row" style="grid-template-columns:1fr 1fr;margin-top:.5rem"><textarea class="inp" rows="3" aria-label="Sprint Goal" placeholder="Sprint Goal (un objetivo comprensible)" data-k="b2.scrum.sprints.${k}.goal">${esc(s.goal)}</textarea><textarea class="inp" rows="3" aria-label="Entregable" placeholder="¿Qué se entrega al final del sprint?" data-k="b2.scrum.sprints.${k}.ent">${esc(s.ent)}</textarea></div></div>`).join('')+
+    `<button class="add" type="button" data-act="add" data-list="b2.scrum.sprints">+ Agregar sprint</button><p class="mono" style="font-size:.66rem;margin:.6rem 0 1rem">Total: ${wk} semanas ${wk>10?'· ⚠ excede las 10 semanas disponibles':wk>0?'· dentro de las 10 semanas':''}</p>`+
+    fld('b2.scrum.cer','¿Cómo adaptan las ceremonias (Planning, Daily, Review, Retro) a un equipo creativo de 18 personas?',{rows:3,min:6,hint:'Duración, quiénes asisten, qué se muestra en la Review, cómo se facilitan sin un Scrum Master de tiempo completo.'});
+  }else if(b==='kanban'){
+    const c=f.kanban.cols;
+    body=`<div class="callout"><b class="k">Si eligieron Kanban</b>Dibujen el tablero completo con columnas adaptadas al proceso creativo y definan el <b>límite WIP</b> de cada columna. Las columnas precargadas son el ejemplo del enunciado: adáptenlas.</div>`+
+    c.map((x,k)=>`<div class="item"><div class="hd"><span>Columna ${k+1}</span>${ctl('','b2.kanban.cols',k,c.length).replace('<div class="hd">','').replace(/<\/div>$/,'')}</div><div class="row" style="grid-template-columns:2fr 1fr"><input class="inp" aria-label="Nombre columna" data-k="b2.kanban.cols.${k}.n" value="${esc(x.n)}"><input class="inp" type="number" min="1" max="20" placeholder="Límite WIP" aria-label="Límite WIP" data-k="b2.kanban.cols.${k}.w" data-re="1" value="${esc(x.w)}"></div></div>`).join('')+
+    `<button class="add" type="button" data-act="add" data-list="b2.kanban.cols">+ Agregar columna</button><div style="height:1rem"></div>`+
+    fld('b2.kanban.pol','Políticas del tablero (¿cuándo una tarjeta pasa a la siguiente columna? ¿qué pasa si se llena el WIP?)',{rows:3,min:6,hint:'Una columna llena no es un problema a esconder: es una señal. Definan qué hacen cuando ocurre.'});
+  }else if(b==='ds'){
+    body=`<div class="callout"><b class="k">Si eligieron Design Sprint</b>Mapeen los 5 días adaptados al reto de la colección cápsula. ¿Quiénes participan cada día? ¿Qué decisión toman el viernes?</div>`+
+    f.ds.dias.map((d,k)=>`<div class="item"><div class="hd"><span>${esc(d.n)}</span></div><div class="row" style="grid-template-columns:1fr 1fr 1fr"><textarea class="inp" rows="3" aria-label="Participantes" placeholder="¿Quiénes participan?" data-k="b2.ds.dias.${k}.par">${esc(d.par)}</textarea><textarea class="inp" rows="3" aria-label="Objetivo del día" placeholder="Objetivo adaptado a la colección cápsula" data-k="b2.ds.dias.${k}.obj">${esc(d.obj)}</textarea><textarea class="inp" rows="3" aria-label="Resultado del día" placeholder="Qué se obtiene al final del día" data-k="b2.ds.dias.${k}.out">${esc(d.out)}</textarea></div></div>`).join('')+
+    fld('b2.ds.decision','Decisión que se toma el viernes',{rows:2,hint:'Debe ser una decisión de negocio verificable con lo aprendido en el test.'});
+  }else{
+    const c=f.lean.ciclos;
+    body=`<div class="callout"><b class="k">Si eligieron Lean UX</b>Definan el ciclo Build–Measure–Learn para el primer experimento. ¿Qué hipótesis están probando? ¿Cómo miden si funciona?</div>`+
+    c.map((x,k)=>`<div class="item"><div class="hd"><span>Ciclo ${k+1}</span>${ctl('','b2.lean.ciclos',k,c.length).replace('<div class="hd">','').replace(/<\/div>$/,'')}</div><textarea class="inp" rows="2" aria-label="Hipótesis" placeholder="Hipótesis: creemos que… lo que provocará… lo sabremos cuando…" data-k="b2.lean.ciclos.${k}.h">${esc(x.h)}</textarea><div class="row" style="grid-template-columns:1fr 1fr 1fr;margin-top:.5rem"><textarea class="inp" rows="3" aria-label="Build" placeholder="Build: ¿qué construimos?" data-k="b2.lean.ciclos.${k}.b">${esc(x.b)}</textarea><textarea class="inp" rows="3" aria-label="Measure" placeholder="Measure: ¿cómo medimos?" data-k="b2.lean.ciclos.${k}.m">${esc(x.m)}</textarea><textarea class="inp" rows="3" aria-label="Learn" placeholder="Learn: ¿qué decidimos según el resultado?" data-k="b2.lean.ciclos.${k}.l">${esc(x.l)}</textarea></div></div>`).join('')+
+    `<button class="add" type="button" data-act="add" data-list="b2.lean.ciclos">+ Agregar ciclo</button>`;
+  }
+  return head(i,'Bloque 2 · Diseño de la solución','Flujo de trabajo ágil','El flujo debe mostrar claramente cómo cambiaría el proceso actual de 22 semanas. Dibujen en la pizarra o construyan aquí su versión digital.')+
+  `<div class="card">${body}</div>`+
+  `<div class="card"><h3>Vista previa del flujo</h3><div id="flowPrev">${flowVisual(S)}</div></div>`+
+  fld('b2.cambio','¿Cómo cambia el proceso actual de 22 semanas con su propuesta? (antes → después)',{rows:4,min:12,crit:'Criterio 3 · 25%',hint:'Compara el proceso lineal actual con el nuevo ritmo: cuándo ve cosas concretas cada área, cada cuánto hay feedback, cuántas semanas esperan para el primer entregable.'})+
+  fld('b2.flujoDesc','Notas adicionales o descripción de lo dibujado en pizarra (opcional)',{rows:3})+navBtns(i);
+},
+artef(i){
+  const bl=S.b2.backlog,mt=S.b2.metricas;
+  return head(i,'Bloque 2 · Paso 2','Artefactos clave','Rodrigo Valdés no tiene paciencia para generalidades: necesita saber exactamente qué va a cambiar y cómo.')+
+  `<h2 style="font-family:var(--f-disp);margin-bottom:.4rem">Backlog inicial <span class="crit">≥ 6 ítems · prioricen: el primero es el más urgente</span></h2><p class="lead" style="margin-bottom:.8rem">Escriban resultados, no tareas. Usen tallas de camiseta (XS–XL) y dividan todo lo que sea XL. Reordenen con ↑ ↓.</p>`+
+  bl.map((b,k)=>`<div class="item"><div class="hd"><span>Prioridad ${k+1}</span>${ctl('','b2.backlog',k,bl.length).replace('<div class="hd">','').replace(/<\/div>$/,'')}</div><div class="row" style="grid-template-columns:3fr 90px"><textarea class="inp" rows="2" aria-label="Ítem de backlog ${k+1}" placeholder="Resultado concreto para la colección cápsula" data-k="b2.backlog.${k}.t">${esc(b.t)}</textarea>${sel('b2.backlog.'+k+'.s',SIZES.map(s=>[s,s]),{al:'Talla'})}</div><input class="inp" style="margin-top:.5rem" aria-label="Por qué va en esta posición" placeholder="¿Por qué en esta posición? (valor, urgencia, dependencia o riesgo)" data-k="b2.backlog.${k}.why" value="${esc(b.why)}"></div>`).join('')+
+  `<button class="add" type="button" data-act="add" data-list="b2.backlog">+ Agregar ítem</button>`+
+  `<datalist id="dlRoles"><option value="Rodrigo Valdés (Gerente General)"><option value="Diseñador/a de moda"><option value="Diseñador/a gráfico/a"><option value="Community manager"><option value="Persona de producción"><option value="Persona de ventas"><option value="Persona administrativa"></datalist>`+
+  `<h2 style="font-family:var(--f-disp);margin:2rem 0 .4rem">Roles ágiles en el equipo de Tela Peruana</h2><p class="lead" style="margin-bottom:.8rem">¿Quién de las 18 personas asume cada rol y por qué? Piensen en autoridad, disponibilidad y carga de trabajo.</p><div class="card"><div class="grid2">${fld('b2.roles.po','Quién es el Product Owner y por qué',{rows:3,min:0,list:'dlRoles'})}${fld('b2.roles.sm','Quién facilita (Scrum Master / coach del proceso) y por qué',{rows:3})}${fld('b2.roles.eq','Quiénes conforman el equipo que produce',{rows:3})}${fld('b2.roles.st','Stakeholders (quién valida y cuándo)',{rows:3})}</div></div>`+
+  `<h2 style="font-family:var(--f-disp);margin:1.5rem 0 .4rem">Métricas de éxito <span class="crit">≥ 3 concretas y medibles</span></h2><p class="lead" style="margin-bottom:.8rem">Cada métrica necesita número, plazo y punto de partida. Ej.: "Reducir el ciclo de 22 a 14 semanas en 6 meses".</p>`+
+  mt.map((m,k)=>{const c=metricCheck(m.t);return`<div class="item"><div class="hd"><span>Métrica ${k+1}</span>${ctl('','b2.metricas',k,mt.length).replace('<div class="hd">','').replace(/<\/div>$/,'')}</div><input class="inp" aria-label="Métrica ${k+1}" data-k="b2.metricas.${k}.t" data-met="1" value="${esc(m.t)}" placeholder="Escribe una métrica medible"><div style="margin-top:.4rem" data-metfor="${k}"><span class="badge ${c.num?'y':'n'}">número</span><span class="badge ${c.plazo?'y':'n'}">plazo</span><span class="badge ${c.base?'y':'n'}">punto de partida</span></div></div>`}).join('')+
+  `<button class="add" type="button" data-act="add" data-list="b2.metricas">+ Agregar métrica</button>`+navBtns(i);
+},
+plan(i){
+  const pl=S.b2.plan;
+  return head(i,'Bloque 2 · Paso 3','Plan de los primeros 30 días','Al menos 6 acciones específicas. Secuencia lógica: alinear y lograr un quick win visible primero; después el primer ciclo completo; al final medir y ajustar.')+
+  pl.map((p,k)=>`<div class="item"><div class="hd"><span>Acción ${k+1}</span>${ctl('','b2.plan',k,pl.length).replace('<div class="hd">','').replace(/<\/div>$/,'')}</div><div class="row" style="grid-template-columns:150px 1fr"><select class="inp" aria-label="Semana" data-k="b2.plan.${k}.s">${['Semana 1','Semana 2','Semana 3','Semana 4','Semana 3–4'].map(s=>`<option ${p.s===s?'selected':''}>${s}</option>`).join('')}</select><textarea class="inp" rows="2" aria-label="Acción específica" placeholder="Acción específica" data-k="b2.plan.${k}.a">${esc(p.a)}</textarea></div><div class="row" style="grid-template-columns:1fr 1fr;margin-top:.5rem"><input class="inp" aria-label="Resultado esperado" placeholder="Resultado esperado (observable)" data-k="b2.plan.${k}.r" value="${esc(p.r)}"><input class="inp" aria-label="Responsable" placeholder="Responsable (persona o rol)" data-k="b2.plan.${k}.p" value="${esc(p.p)}"></div></div>`).join('')+
+  `<button class="add" type="button" data-act="add" data-list="b2.plan">+ Agregar acción</button>`+navBtns(i);
+},
+expo(i){
+  return head(i,'Bloque 3 · Presentación y reflexión','Preparación de la exposición','5 a 7 minutos estrictos. Estructura obligatoria: Problema (1 min) → Solución ágil (3–4 min) → Métricas y obstáculos (1–2 min). Después, una pregunta crítica del evaluador.')+
+  `<div class="rh"><div class="t" id="rhT">00:00</div><div class="m" id="rhM">Ensayo cronometrado. Meta: entre 05:00 y 07:00.</div><button class="btn lime" type="button" data-act="rh">▶ Iniciar ensayo</button></div>`+
+  (S.b3.ensayoSeg?`<p class="mono" style="font-size:.68rem;margin:-.5rem 0 1rem">Último ensayo: ${mmss(S.b3.ensayoSeg*1000)} ${S.b3.ensayoSeg>=300&&S.b3.ensayoSeg<=420?'✓ dentro de rango':'· fuera del rango 5–7 min'}</p>`:'')+
+  `<div class="card"><div style="display:flex;gap:.5rem;justify-content:space-between;align-items:center;flex-wrap:wrap"><h3>1 · Problema (1 min)</h3><button class="add" type="button" data-act="traerProb">Traer de Diagnóstico</button></div>${fld('b3.prob','Una sola oración potente',{rows:2,min:8})}</div>`+
+  `<div class="card"><h3>2 · Solución ágil (3–4 min)</h3>${fld('b3.sol','¿Qué metodología eligieron, por qué y cómo la adaptaron? Guion: muestren el flujo visual',{rows:5,min:8})}</div>`+
+  `<div class="card"><h3>3 · Métricas y obstáculos (1–2 min)</h3>${fld('b3.met','Beneficios esperados y en qué plazo',{rows:3,min:8})}${fld('b3.obst','Obstáculos que anticipan y cómo los enfrentan',{rows:3,min:8})}</div>`+
+  `<div class="card dark"><h3>Pregunta crítica: ensáyenla antes de que la haga el evaluador</h3><p id="pregTxt" style="margin-bottom:.8rem;font-size:.95rem">${esc(S.b3.preg||'Pulsa el botón para sortear una pregunta.')}</p><button class="btn lime" type="button" data-act="preg">🎲 Sortear pregunta</button></div>`+
+  fld('b3.notas','Notas de preparación para la exposición (quién dice qué, respuestas ensayadas)',{rows:5})+navBtns(i);
+},
+rev(i){
+  const cr=criterios(S);
+  return head(i,'Bloque 3 · Paso 3','Revisión final','Antes de presentar, revisen juntos. El semáforo mide completitud de lo escrito, no la calidad: la nota la define la rúbrica del docente.')+
+  `<div class="semaforo" style="margin-bottom:1.5rem">${cr.map(c=>`<div class="sem-row"><div class="h"><b>${c[0]}</b><span>${c[1]}% · completitud ${Math.round(c[2]*100)}%</span></div><div class="bar ${c[2]>=.99?'g':''}"><i style="width:${Math.round(c[2]*100)}%"></i></div></div>`).join('')}</div>`+
+  `<h2 style="font-family:var(--f-disp);margin-bottom:.6rem">Revisión conjunta del grupo</h2><div class="chk">${['¿Su propuesta es autocontenida? ¿Alguien que no estuvo en la sesión podría entenderla leyendo su hoja de trabajo?','¿Respondieron la pregunta que Rodrigo Valdés les hizo: qué hago el lunes por la mañana?','¿Cada integrante puede explicar cualquier parte de la propuesta, no solo la que diseñó?'].map((t,k)=>`<label><input type="checkbox" data-chk="${k}" ${S.rev.c[k]?'checked':''}><span>${t}</span></label>`).join('')}</div>`+
+  `<div class="callout" style="margin-top:1rem"><b class="k">Pendientes detectados</b><ul style="margin-left:1.1rem">${pendientes().map(p=>`<li>${p}</li>`).join('')||'<li>Nada pendiente. ¡Listos para presentar!</li>'}</ul></div>`+navBtns(i);
+},
+entrega(i){
+  return head(i,'Cierre','Entrega y exportación','El entregable es una presentación en pizarra u hoja de trabajo proyectable. Aquí pueden proyectar su propuesta, imprimirla o guardarla.')+
+  `<div class="grid2"><div class="card"><h3>Proyectar</h3><p style="margin-bottom:.8rem">Presentación a pantalla completa generada con lo que escribieron: problema, metodología, flujo visual, backlog y roles, métricas y plan.</p><button class="btn lime" type="button" data-act="proj">Abrir proyección</button></div>
+  <div class="card"><h3>Imprimir / guardar PDF</h3><p style="margin-bottom:.8rem">Hoja de trabajo completa lista para imprimir. En el diálogo elige "Guardar como PDF".</p><button class="btn" type="button" data-act="print">Imprimir hoja</button></div>
+  <div class="card"><h3>Descargas</h3><p style="margin-bottom:.8rem">El archivo .json es la entrega para el docente (puede cargarlo en el modo evaluador). El .md es un texto legible.</p><button class="btn" type="button" data-act="dlJson">Descargar .json</button> <button class="btn sec" type="button" data-act="dlMd">Descargar .md</button></div>
+  <div class="card"><h3>Importar / reiniciar</h3><p style="margin-bottom:.8rem">Cargar un .json guardado, o empezar de cero.</p><label class="btn sec" style="cursor:pointer">Importar .json<input type="file" accept=".json,application/json" id="impFile" style="display:none"></label> <button class="btn sec" type="button" data-act="reset" id="resetBtn">Reiniciar todo</button></div></div>`+
+  `<div class="callout"><b class="k">Importante</b>Todo se guarda solo en este navegador y este dispositivo. Trabajen desde un solo equipo y descarguen el .json antes de cerrar. <a href="#docente">Modo evaluador (docente)</a></div>`+navBtns(i);
+}
+};
+function pendientes(){
+  const p=[];
+  STEPS.forEach(s=>{if(['caso','rev','entrega'].includes(s.id))return;const g=progress(s.id,S);if(g.d<g.t)p.push(`<b>${s.t}</b>: ${g.d} de ${g.t} elementos`)});
+  return p;
+}
+
+/* ═══════════ render ═══════════ */
+let cur=lsGet(KEY+'_step','equipo');
+function renderSide(){
+  $('#side').innerHTML='<h2>Pasos</h2>'+STEPS.map(s=>{const p=progress(s.id,S),dn=p.t&&p.d>=p.t;return`<button type="button" class="st ${s.id===cur?'on':''} ${dn?'done':''}" data-go="${s.id}" ${s.id===cur?'aria-current="step"':''}><span class="n">${dn?'✓':s.n}</span><span>${s.t}</span><span class="pg">${p.t?p.d+'/'+p.t:''}</span></button>`}).join('')+`<h2>Más</h2><button type="button" class="st" data-act="openCaso"><span class="n">?</span><span>Ver el caso</span></button><a class="st" href="#docente" style="text-decoration:none"><span class="n">D</span><span>Modo evaluador</span></a>`;
+  const o=overall(S);$('#ovBar').style.width=Math.round(o*100)+'%';
+  $('#navGrp').textContent=S.meta.grupo.trim()||'Evaluación 1 · A1';
+}
+function renderView(keepScroll){
+  const i=STEPS.findIndex(s=>s.id===cur);
+  const y=window.scrollY;
+  $('#main').innerHTML=VIEWS[cur](i);
+  updMeters();renderSide();tick();
+  if(keepScroll)window.scrollTo(0,y);
+}
+function go(id){cur=id;lsSet(KEY+'_step',id);renderView();window.scrollTo(0,0);$('#main').focus({preventScroll:true});save()}
+function updMeters(){$$('.meter').forEach(m=>{const v=pget(S,m.dataset.for)||'',n=wc(v),min=+m.dataset.min;m.classList.toggle('ok',n>=min);m.innerHTML=`<span>${n} palabras</span><span>${n>=min?'✓ suficiente desarrollo':'recomendado: ≥ '+min+' palabras'}</span>`})}
+
+/* ═══════════ eventos ═══════════ */
+function onField(e){
+  const t=e.target,k=t.dataset&&t.dataset.k;
+  if(k){
+    let v=t.type==='checkbox'?t.checked:t.value;
+    if(t.dataset.num)v=+v;
+    pset(S,k,v);
+    if(t.dataset.met){const c=metricCheck(v),box=$(`[data-metfor="${k.split('.')[2]}"]`);if(box)box.innerHTML=['num|número','plazo|plazo','base|punto de partida'].map(x=>{const[a,b]=x.split('|');return`<span class="badge ${c[a]?'y':'n'}">${b}</span>`}).join('')}
+    updMeters();if(e.type==='input')renderSide();saveSoon();
+    if(e.type==='change'&&t.dataset.re)renderView(true);
+    else if(cur==='flujo'&&/^b2\.(scrum|kanban|ds|lean)/.test(k)){$('#flowPrev').innerHTML=flowVisual(S)}
+    return;
+  }
+  if(t.dataset&&t.dataset.chk!==undefined){S.rev.c[+t.dataset.chk]=t.checked;renderSide();saveSoon()}
+}
+document.addEventListener('input',onField);
+document.addEventListener('change',onField);
+
+const NEW={
+ 'b2.scrum.sprints':()=>({n:'Sprint '+(S.b2.scrum.sprints.length+1),sem:2,goal:'',ent:''}),
+ 'b2.kanban.cols':()=>({n:'',w:''}),'b2.lean.ciclos':()=>({h:'',b:'',m:'',l:''}),
+ 'b2.backlog':()=>({t:'',s:'M',why:''}),'b2.metricas':()=>({t:''}),'b2.plan':()=>({s:'Semana 3–4',a:'',r:'',p:''})
+};
+const PREGS=['¿Una sola metodología será suficiente para resolver todos los problemas que identifican?','¿Scrum funciona igual en una agencia creativa de moda que en una empresa de tecnología?','¿Qué pasa si el cliente cambia de opinión a mitad del sprint sobre la dirección estética de la colección?','¿Cómo convences a diseñadores creativos —que valoran su autonomía— de trabajar con ceremonias y tableros?','¿Y si esto no funciona en 30 días?','¿Por qué descartaron la otra metodología que compararon?','¿Quién es realmente el Product Owner y qué pasa si no tiene tiempo?'];
+let rh={run:false,t0:0,iv:null};
+let armReset=false;
+
+document.addEventListener('click',e=>{
+  const g=e.target.closest('[data-go]');if(g){go(g.dataset.go);return}
+  const a=e.target.closest('[data-act]');if(!a)return;
+  const act=a.dataset.act,list=a.dataset.list,i=+a.dataset.i;
+  if(act==='add'){pget(S,list).push(NEW[list]());save();renderView(true)}
+  else if(act==='del'){const L=pget(S,list);const min={'b2.scrum.sprints':1,'b2.kanban.cols':2,'b2.lean.ciclos':1,'b2.backlog':1,'b2.metricas':1,'b2.plan':1}[list]||1;if(L.length>min){L.splice(i,1);save();renderView(true)}}
+  else if(act==='up'||act==='down'){const L=pget(S,list),j=act==='up'?i-1:i+1;[L[i],L[j]]=[L[j],L[i]];save();renderView(true)}
+  else if(act==='setMetodo'){S.b1.metodo=a.dataset.v;if(S.b1.descartada===a.dataset.v)S.b1.descartada='';save();renderView(true)}
+  else if(act==='openCaso'){$('#casoBox').innerHTML=casoHTML();$('#ovCaso').classList.add('open')}
+  else if(act==='closeCaso')$('#ovCaso').classList.remove('open');
+  else if(act==='traerProb'){S.b3.prob=S.b1.problema;save();renderView(true)}
+  else if(act==='preg'){S.b3.preg=PREGS[Math.floor(Math.random()*PREGS.length)];$('#pregTxt').textContent=S.b3.preg;save()}
+  else if(act==='rh'){
+    if(!rh.run){rh.run=true;rh.t0=Date.now();a.textContent='■ Detener ensayo';rh.iv=setInterval(rhTick,250)}
+    else{clearInterval(rh.iv);rh.run=false;S.b3.ensayoSeg=Math.round((Date.now()-rh.t0)/1000);save();renderView(true)}
+  }
+  else if(act==='proj')openProj();
+  else if(act==='print')doPrint();
+  else if(act==='dlJson')dl('entrega_'+slug()+'.json',JSON.stringify(S,null,2),'application/json');
+  else if(act==='dlMd')dl('entrega_'+slug()+'.md',toMD(S),'text/markdown');
+  else if(act==='reset'){if(!armReset){armReset=true;a.textContent='¿Seguro? Pulsa otra vez';setTimeout(()=>{armReset=false;if(a.isConnected)a.textContent='Reiniciar todo'},4000)}else{S=defState();lsSet(KEY,S);armReset=false;go('equipo')}}
+  else if(act==='projNext')pj(1);else if(act==='projPrev')pj(-1);else if(act==='projClose')closeProj();
+});
+function rhTick(){const s=Math.floor((Date.now()-rh.t0)/1000),el=$('#rhT');if(!el){clearInterval(rh.iv);return}el.textContent=mmss(s*1000);el.className='t '+(s>420?'bad':s>=300?'':(s>=270?'warn':''));$('#rhM').textContent=s<300?'Faltan '+mmss((300-s)*1000)+' para el mínimo de 5 min.':s<=420?'Dentro del rango 5–7 min ✓':'Se pasaron del máximo de 7 min.'}
+document.addEventListener('change',e=>{if(e.target.id==='impFile'){const f=e.target.files[0];if(!f)return;f.text().then(t=>{try{const o=JSON.parse(t);if(!o||!o.b1||!o.b2||!o.meta)throw 0;S=merge(defState(),o);S.timer.startedAt=null;save();go('equipo')}catch(x){alert('El archivo no parece una entrega válida de esta plataforma.')}})}});
+const slug=()=>(S.meta.grupo||'grupo').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,'_').replace(/^_|_$/g,'')||'grupo';
+function dl(n,c,t){const b=new Blob([c],{type:t+';charset=utf-8'}),u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download=n;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),500)}
+$('#btnCaso').onclick=()=>{$('#casoBox').innerHTML=casoHTML();$('#ovCaso').classList.add('open')};
+$('#btnProj').onclick=openProj;
+
+/* ═══════════ resumen / impresión / markdown ═══════════ */
+const rn=r=>(ROLES.find(x=>x[0]===r)||[0,'—'])[1];
+function metodoNombre(st,k){return k&&METODOS[k]?METODOS[k][0]:'—'}
+function flowText(st){
+  const b=st.b1.metodo,f=st.b2;
+  if(b==='scrum')return f.scrum.sprints.map((s,i)=>`${s.n||'Sprint '+(i+1)} (${s.sem} sem) — Goal: ${s.goal||'—'} · Entrega: ${s.ent||'—'}`);
+  if(b==='kanban')return f.kanban.cols.map(c=>`${c.n} (WIP ${c.w||'?'})`);
+  if(b==='ds')return f.ds.dias.map(d=>`${d.n} — Participan: ${d.par||'—'} · Objetivo: ${d.obj||'—'} · Sale: ${d.out||'—'}`).concat(['Decisión del viernes: '+(f.ds.decision||'—')]);
+  if(b==='lean')return f.lean.ciclos.map((c,i)=>`Ciclo ${i+1} — Hipótesis: ${c.h||'—'} · Build: ${c.b||'—'} · Measure: ${c.m||'—'} · Learn: ${c.l||'—'}`);
+  return[];
+}
+function renderSummary(st){
+  const P=t=>`<div class="pre">${esc(t||'—')}</div>`,b1=st.b1,b2=st.b2,b3=st.b3;
+  return`<h1>Evaluación 1 · ${esc(st.meta.grupo||'Grupo sin nombre')}</h1><div class="meta">ZEGEL · Metodologías Ágiles de Innovación · Semana 5 · Caso Tela Peruana S.A.C.</div>
+  <h2>Equipo</h2><table><tr><th>Integrante</th><th>Rol</th></tr>${st.team.filter(m=>m.n.trim()).map(m=>`<tr><td>${esc(m.n)}</td><td>${esc(rn(m.r))}</td></tr>`).join('')}</table><div class="meta">Timekeeper: ${esc(st.extra.time||'—')} · Escriba: ${esc(st.extra.escriba||'—')}</div>
+  <h2>Bloque 1 · Diagnóstico</h2><h3>Problema central</h3>${P(b1.problema)}<h3>Cuello de botella</h3>${P(b1.q1)}<h3>Valor del Manifiesto violado</h3>${P(b1.q2)}<h3>Impacto en el negocio</h3>${P(b1.q3)}<h3>Obstáculos humanos y culturales</h3>${P(b1.q4)}
+  <h2>Metodología</h2><h3>Elegida: ${metodoNombre(st,b1.metodo)} · Descartada: ${metodoNombre(st,b1.descartada)}</h3>${P(b1.porque)}<h3>Riesgo y mitigación</h3>${P(b1.riesgo)}
+  <h2>Bloque 2 · Flujo de trabajo</h2><ul>${flowText(st).map(x=>`<li>${esc(x)}</li>`).join('')||'<li>—</li>'}</ul>${b1.metodo==='scrum'?`<h3>Product Owner</h3>${P(b2.scrum.po)}<h3>Ceremonias</h3>${P(b2.scrum.cer)}`:''}${b1.metodo==='kanban'?`<h3>Políticas del tablero</h3>${P(b2.kanban.pol)}`:''}<h3>Cómo cambia el proceso actual</h3>${P(b2.cambio)}${b2.flujoDesc?`<h3>Notas</h3>${P(b2.flujoDesc)}`:''}
+  <h2>Backlog priorizado</h2><table><tr><th>#</th><th>Ítem</th><th>Talla</th><th>Por qué</th></tr>${b2.backlog.map((x,i)=>`<tr><td>${i+1}</td><td>${esc(x.t)}</td><td>${esc(x.s)}</td><td>${esc(x.why)}</td></tr>`).join('')}</table>
+  <h2>Roles ágiles</h2><table><tr><th>Rol</th><th>Asignación</th></tr><tr><td>Product Owner</td><td>${esc(b2.roles.po)}</td></tr><tr><td>Facilitador / Scrum Master</td><td>${esc(b2.roles.sm)}</td></tr><tr><td>Equipo</td><td>${esc(b2.roles.eq)}</td></tr><tr><td>Stakeholders</td><td>${esc(b2.roles.st)}</td></tr></table>
+  <h2>Métricas de éxito</h2><ol>${b2.metricas.map(m=>`<li>${esc(m.t)||'—'}</li>`).join('')}</ol>
+  <h2>Plan de 30 días</h2><table><tr><th>Semana</th><th>Acción</th><th>Resultado esperado</th><th>Responsable</th></tr>${b2.plan.map(p=>`<tr><td>${esc(p.s)}</td><td>${esc(p.a)}</td><td>${esc(p.r)}</td><td>${esc(p.p)}</td></tr>`).join('')}</table>
+  <h2>Bloque 3 · Exposición</h2><h3>Problema (1 min)</h3>${P(b3.prob)}<h3>Solución ágil (3–4 min)</h3>${P(b3.sol)}<h3>Métricas y obstáculos (1–2 min)</h3>${P(b3.met+(b3.obst?'\n\nObstáculos: '+b3.obst:''))}${b3.notas?`<h3>Notas de preparación</h3>${P(b3.notas)}`:''}`;
+}
+function toMD(st){
+  const b1=st.b1,b2=st.b2,b3=st.b3,L=[];
+  L.push(`# Evaluación 1 · ${st.meta.grupo||'Grupo'}`,'ZEGEL · Metodologías Ágiles de Innovación · Caso Tela Peruana','','## Equipo',...st.team.filter(m=>m.n.trim()).map(m=>`- ${m.n} — ${rn(m.r)}`),'',
+  '## Bloque 1 · Diagnóstico','**Problema central:** '+b1.problema,'','**Cuello de botella:** '+b1.q1,'','**Valor violado:** '+b1.q2,'','**Impacto:** '+b1.q3,'','**Obstáculos:** '+b1.q4,'',
+  `## Metodología\n**Elegida:** ${metodoNombre(st,b1.metodo)} · **Descartada:** ${metodoNombre(st,b1.descartada)}`,'',b1.porque,'','**Riesgo y mitigación:** '+b1.riesgo,'',
+  '## Bloque 2 · Flujo',...flowText(st).map(x=>'- '+x),'','**Cómo cambia el proceso:** '+b2.cambio,'',
+  '## Backlog',...b2.backlog.map((x,i)=>`${i+1}. [${x.s}] ${x.t} — ${x.why}`),'',
+  '## Roles',`- PO: ${b2.roles.po}`,`- Facilitador: ${b2.roles.sm}`,`- Equipo: ${b2.roles.eq}`,`- Stakeholders: ${b2.roles.st}`,'',
+  '## Métricas',...b2.metricas.map((m,i)=>`${i+1}. ${m.t}`),'',
+  '## Plan de 30 días','| Semana | Acción | Resultado | Responsable |','|---|---|---|---|',...b2.plan.map(p=>`| ${p.s} | ${p.a} | ${p.r} | ${p.p} |`),'',
+  '## Bloque 3 · Exposición','**Problema:** '+b3.prob,'','**Solución:** '+b3.sol,'','**Métricas:** '+b3.met,'','**Obstáculos:** '+b3.obst,'');
+  return L.join('\n');
+}
+function doPrint(){$('#printArea').innerHTML=renderSummary(S);setTimeout(()=>window.print(),50)}
+window.addEventListener('beforeprint',()=>{$('#printArea').innerHTML=(document.body.classList.contains('docente')&&window.__docenteView)||renderSummary(S)});
+
+/* ═══════════ proyección ═══════════ */
+let pi=0;
+function slides(st,wrap=true){
+  const b1=st.b1,b2=st.b2,b3=st.b3,lst=t=>t?`<p>${esc(t)}</p>`:'<p class="empty">—</p>';
+  const S_=[
+   `<div class="slide red on"><div class="k" style="color:var(--lime)">Evaluación 1 · Tela Peruana S.A.C.</div><h2>${esc(st.meta.grupo||'Nuestra agencia')}</h2><ul>${st.team.filter(m=>m.n.trim()).map(m=>`<li><b>${esc(m.n)}</b> — ${esc(rn(m.r))}</li>`).join('')}</ul></div>`,
+   `<div class="slide"><div class="k">1 · Problema</div><div class="big">${esc(b3.prob||b1.problema||'—')}</div></div>`,
+   `<div class="slide"><div class="k">2 · Solución ágil</div><h2>${metodoNombre(st,b1.metodo)}</h2>${b1.descartada?`<p style="color:var(--gray-lt)">Descartada: ${metodoNombre(st,b1.descartada)}</p>`:''}${lst(b3.sol||b1.porque)}</div>`,
+   `<div class="slide"><div class="k">2 · Flujo de trabajo</div><h2>Cómo cambia el proceso de 22 semanas</h2>${flowVisual(st)}${b2.cambio?`<p>${esc(b2.cambio)}</p>`:''}</div>`,
+   `<div class="slide"><div class="k">2 · Backlog y roles</div><div style="display:grid;grid-template-columns:1.3fr 1fr;gap:3vw"><div><h2 style="font-size:clamp(1.3rem,2.4vw,2rem)">Backlog priorizado</h2><ol style="margin-left:1.3rem">${b2.backlog.filter(x=>x.t.trim()).map(x=>`<li>${esc(x.t)} <b style="color:var(--lime)">[${x.s}]</b></li>`).join('')}</ol></div><div><h2 style="font-size:clamp(1.3rem,2.4vw,2rem)">Roles</h2><ul><li><b>PO:</b> ${esc(b2.roles.po)}</li><li><b>Facilita:</b> ${esc(b2.roles.sm)}</li><li><b>Equipo:</b> ${esc(b2.roles.eq)}</li><li><b>Stakeholders:</b> ${esc(b2.roles.st)}</li></ul></div></div></div>`,
+   `<div class="slide"><div class="k">3 · Métricas y plan de 30 días</div><div style="display:grid;grid-template-columns:1fr 1.4fr;gap:3vw"><div><h2 style="font-size:clamp(1.3rem,2.4vw,2rem)">Métricas</h2><ol style="margin-left:1.3rem">${b2.metricas.filter(m=>m.t.trim()).map(m=>`<li>${esc(m.t)}</li>`).join('')}</ol></div><div><h2 style="font-size:clamp(1.3rem,2.4vw,2rem)">Primeros 30 días</h2><table class="tbl"><thead><tr><th>Sem.</th><th>Acción</th><th>Resp.</th></tr></thead><tbody>${b2.plan.filter(p=>p.a.trim()).map(p=>`<tr><td>${esc(p.s)}</td><td>${esc(p.a)}</td><td>${esc(p.p)}</td></tr>`).join('')}</tbody></table></div></div></div>`,
+   `<div class="slide red"><div class="k" style="color:var(--lime)">3 · Obstáculos y cierre</div><h2>Lo que anticipamos</h2>${lst(b3.obst||b1.q4)}${b3.met?`<p style="margin-top:1rem"><b>Beneficios esperados:</b> ${esc(b3.met)}</p>`:''}</div>`
+  ];
+  return S_;
+}
+function openProj(){pi=0;$('#projSlides').innerHTML=slides(S).join('');$('#proj').classList.add('open');pj(0);const el=document.documentElement;if(el.requestFullscreen)el.requestFullscreen().catch(()=>{})}
+function closeProj(){$('#proj').classList.remove('open');if(document.fullscreenElement)document.exitFullscreen().catch(()=>{})}
+function pj(d){const s=$$('#projSlides .slide');pi=Math.max(0,Math.min(s.length-1,pi+d));s.forEach((x,k)=>x.classList.toggle('on',k===pi));$('#projC').textContent=(pi+1)+' / '+s.length}
+document.addEventListener('keydown',e=>{
+  if($('#proj').classList.contains('open')){if(e.key==='ArrowRight'||e.key===' ')pj(1);else if(e.key==='ArrowLeft')pj(-1);else if(e.key==='Escape')closeProj()}
+  else if(e.key==='Escape')$('#ovCaso').classList.remove('open');
+});
+
+/* ═══════════ MODO EVALUADOR ═══════════ */
+let D=lsGet(KEYD,{groups:[],sel:0});
+const RUBN=[['Coherencia del diagnóstico',30],['Selección y justificación de metodología',30],['Calidad de la propuesta de implementación',25],['Exposición y trabajo colaborativo',15]];
+const lvl=n=>n<=10?'Insuficiente':n<=14?'En desarrollo':n<=17?'Logrado':'Sobresaliente';
+function renderDocente(){
+  const g=D.groups[D.sel];
+  $('#side').innerHTML='<h2>Modo evaluador</h2><a class="st" href="#" style="text-decoration:none"><span class="n">←</span><span>Volver a la plataforma</span></a>';
+  $('#ovBar').style.width='0';
+  let h=`<div class="eyebrow">Modo evaluador · docente</div><h1 class="ttl">Revisión y rúbrica</h1><p class="lead">Cargue los archivos .json que entregan los grupos. La rúbrica calcula la nota ponderada (0–20) y guarda sus observaciones en este navegador.</p>
+  <div class="card"><label class="btn" style="cursor:pointer">Cargar entregas (.json)<input type="file" accept=".json,application/json" id="docFiles" multiple style="display:none"></label> <span class="mono" style="font-size:.68rem">${D.groups.length} grupo(s) cargados</span></div>`;
+  if(!g)return h+'<p class="empty">Todavía no hay entregas cargadas.</p>';
+  const sc=g.scores,nota=RUBN.reduce((a,r,i)=>a+sc[i]*r[1]/100,0),cr=criterios(g.data);
+  h+=`<div class="doc-wrap"><div class="gl">${D.groups.map((x,i)=>`<button type="button" class="${i===D.sel?'on':''}" data-dsel="${i}">${esc(x.data.meta.grupo||'Grupo '+(i+1))}<small>completitud ${Math.round(overall(x.data)*100)}%</small></button>`).join('')}</div>
+  <div><div class="gradebox"><b>${nota.toFixed(1)}</b>Nota ponderada (0–20) · ${lvl(Math.round(nota))}</div><div style="height:1rem"></div>
+  ${RUBN.map((r,i)=>`<div class="rub"><div class="h"><span style="font-family:var(--f-disp);color:var(--black);font-size:.9rem">${r[0]}</span><span>${r[1]}% · completitud escrita ${Math.round(cr[i][2]*100)}%</span></div><input type="range" min="0" max="20" value="${sc[i]}" data-dsc="${i}" aria-label="Puntaje ${r[0]}"><div class="mono" style="font-size:.72rem" id="dsl${i}">${sc[i]} / 20 · ${lvl(sc[i])}</div><textarea class="inp" rows="2" style="margin-top:.4rem" placeholder="Observaciones" data-dnote="${i}">${esc(g.notes[i])}</textarea></div>`).join('')}
+  <div class="rub"><b style="font-family:var(--f-disp)">Pregunta crítica y respuesta del grupo</b><textarea class="inp" rows="3" style="margin-top:.4rem" data-dnote="4">${esc(g.notes[4])}</textarea></div>
+  <button class="btn" type="button" data-dact="acta">Descargar acta (.md)</button> <button class="btn sec" type="button" data-dact="del">Quitar grupo</button></div></div>
+  <h2 style="font-family:var(--f-disp);margin:2rem 0 .6rem">Entrega del grupo</h2><div class="card" id="docSummary" style="border-left-color:var(--black)">${renderSummary(g.data)}</div>`;
+  window.__docenteView=renderSummary(g.data);
+  return h;
+}
+function showDocente(){
+  window.__docenteView=null;
+  $('#main').innerHTML=renderDocente();
+  document.title='Modo evaluador · Evaluación 1 | ZEGEL';
+}
+document.addEventListener('change',e=>{
+  if(e.target.id==='docFiles'){
+    Promise.all([...e.target.files].map(f=>f.text().then(t=>{try{const o=JSON.parse(t);if(o&&o.b1&&o.b2&&o.meta)return merge(defState(),o)}catch(x){}return null}))).then(rs=>{
+      rs.filter(Boolean).forEach(o=>{const n=(o.meta.grupo||'').trim(),ix=D.groups.findIndex(x=>(x.data.meta.grupo||'').trim()===n&&n);const rec={data:o,scores:ix>=0?D.groups[ix].scores:[12,12,12,12],notes:ix>=0?D.groups[ix].notes:['','','','','']};if(ix>=0)D.groups[ix]=rec;else D.groups.push(rec)});
+      D.sel=Math.max(0,D.groups.length-1);lsSet(KEYD,D);showDocente();
+    });
+  }
+});
+document.addEventListener('input',e=>{
+  const t=e.target;
+  if(t.dataset.dsc!==undefined){const i=+t.dataset.dsc,g=D.groups[D.sel];g.scores[i]=+t.value;$('#dsl'+i).textContent=t.value+' / 20 · '+lvl(+t.value);const nota=RUBN.reduce((a,r,k)=>a+g.scores[k]*r[1]/100,0);$('.gradebox').innerHTML=`<b>${nota.toFixed(1)}</b>Nota ponderada (0–20) · ${lvl(Math.round(nota))}`;lsSet(KEYD,D)}
+  else if(t.dataset.dnote!==undefined){D.groups[D.sel].notes[+t.dataset.dnote]=t.value;lsSet(KEYD,D)}
+});
+document.addEventListener('click',e=>{
+  const s=e.target.closest('[data-dsel]');if(s){D.sel=+s.dataset.dsel;lsSet(KEYD,D);showDocente();return}
+  const a=e.target.closest('[data-dact]');if(!a)return;const g=D.groups[D.sel];
+  if(a.dataset.dact==='del'){D.groups.splice(D.sel,1);D.sel=0;lsSet(KEYD,D);showDocente()}
+  else if(a.dataset.dact==='acta'){const nota=RUBN.reduce((x,r,i)=>x+g.scores[i]*r[1]/100,0);dl('acta_'+(g.data.meta.grupo||'grupo').replace(/\W+/g,'_')+'.md',`# Acta · ${g.data.meta.grupo}\n\n**Nota ponderada:** ${nota.toFixed(1)} / 20 (${lvl(Math.round(nota))})\n\n`+RUBN.map((r,i)=>`- ${r[0]} (${r[1]}%): ${g.scores[i]}/20 · ${lvl(g.scores[i])}${g.notes[i]?' — '+g.notes[i]:''}`).join('\n')+`\n\n**Pregunta crítica / respuesta:** ${g.notes[4]||'—'}\n`,'text/markdown')}
+});
+
+/* ═══════════ arranque ═══════════ */
+function route(){
+  if(location.hash==='#docente'){document.body.classList.add('docente');showDocente()}
+  else{document.body.classList.remove('docente');document.title='Plataforma de Evaluación 1 · Tela Peruana | ZEGEL Metodologías Ágiles';renderView()}
+}
+window.addEventListener('hashchange',route);
+if(!VIEWS[cur])cur='equipo';
+route();tick();
+</script>
+</body>
+</html>
